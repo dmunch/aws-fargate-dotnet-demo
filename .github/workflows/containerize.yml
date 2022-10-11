@@ -6,6 +6,10 @@ on:
       - 'src/**'
       - '.github/workflows/containerize.yml'      
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,3 +25,18 @@ jobs:
       - name: Publish
         #This command creates a docker image, due to the PublishProfile being set in Demo.Api.csproj
         run: dotnet publish
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::632815008263:role/github_actions_role
+          aws-region: eu-central-1
+      
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Tag and push to Amazon ECR
+        run: |
+          docker tag dmunch/aws-farget-dotnet-demo:1.0.0 632815008263.dkr.ecr.eu-central-1.amazonaws.com/aws-fargate-dotnet-demo-test:${{ github.sha }}
+          docker push 632815008263.dkr.ecr.eu-central-1.amazonaws.com/aws-fargate-dotnet-demo-test:${{ github.sha }}
