@@ -1,0 +1,21 @@
+name: Containerize ASP.NET Core application
+
+on:
+  push:
+    paths:
+      - 'src/**'
+      - '.github/workflows/containerize.yml'      
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/Demo.Api/
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v2      
+      - name: Publish
+        #This command creates a docker image, due to the PublishProfile being set in Demo.Api.csproj
+        run: dotnet publish
