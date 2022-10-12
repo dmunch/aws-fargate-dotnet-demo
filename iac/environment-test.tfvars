@@ -1,5 +1,5 @@
 name                = "aws-fargate-dotnet-demo"
-container_image     = "dmunch/aws-fargate-dotnet-demo"
+container_image     = "632815008263.dkr.ecr.eu-central-1.amazonaws.com/aws-fargate-dotnet-demo-test:14639560b3cc5f59c5f9258e35cb35b14bee83fc"
 dns_tld             = "munch.engineering"
 dns_subdomain       = "demo"
 environment         = "test"
