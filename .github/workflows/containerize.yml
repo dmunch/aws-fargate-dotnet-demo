@@ -37,6 +37,31 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Tag and push to Amazon ECR
+        env:
+          ECR_REGISTRY: 632815008263.dkr.ecr.eu-central-1.amazonaws.com
+          ECR_REPOSITORY: aws-fargate-dotnet-demo-test
         run: |
-          docker tag dmunch/aws-farget-dotnet-demo:1.0.0 632815008263.dkr.ecr.eu-central-1.amazonaws.com/aws-fargate-dotnet-demo-test:${{ github.sha }}
-          docker push 632815008263.dkr.ecr.eu-central-1.amazonaws.com/aws-fargate-dotnet-demo-test:${{ github.sha }}
+          docker tag dmunch/aws-farget-dotnet-demo:1.0.0 $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          echo "image_name=$ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}" >> $GITHUB_ENV
+
+      - name: Download task definition
+        env:
+          TASK_DEFINITION: aws-fargate-dotnet-demo-task-test 
+        run: |
+          aws ecs describe-task-definition --task-definition $TASK_DEFINITION --query taskDefinition > $GITHUB_WORKSPACE/task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: aws-fargate-dotnet-demo-container-test
+          image: ${{ env.image_name }}
+
+      - name: Deploy to Amazon ECS service
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          service: aws-fargate-dotnet-demo-service-test
+          cluster: aws-fargate-dotnet-demo-cluster-test
+          wait-for-service-stability: true
