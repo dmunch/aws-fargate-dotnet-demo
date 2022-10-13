@@ -39,6 +39,16 @@ resource "aws_iam_policy" "github_actions_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Action = [
+            "iam:PassRole"
+        ],
+        Effect = "Allow",
+        Resource = [
+            module.ecs.aws_ecs_task_role_arn,
+            module.ecs.aws_ecs_task_execution_role_arn,
+        ]
+      },
+      {
         Action   = [
             "ecr:GetAuthorizationToken",
             "ecs:DescribeTaskDefinition",

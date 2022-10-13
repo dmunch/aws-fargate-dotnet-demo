@@ -201,3 +201,11 @@ resource "aws_appautoscaling_policy" "ecs_policy_cpu" {
 output "aws_ecs_service_id" {
     value = aws_ecs_service.main.id
 }
+
+output "aws_ecs_task_role_arn" {
+  value = aws_iam_role.ecs_task_role.arn
+}
+
+output "aws_ecs_task_execution_role_arn" {
+  value = aws_iam_role.ecs_task_execution_role.arn
+}
