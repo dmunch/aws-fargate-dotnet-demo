@@ -11,8 +11,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
-    <PublishProfile>DefaultContainer</PublishProfile>
     <ContainerImageName>dmunch/aws-farget-dotnet-demo</ContainerImageName>
 </PropertyGroup>
 </Project>

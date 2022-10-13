@@ -24,7 +24,7 @@ jobs:
           dotnet-version: '7.0.100-rc.1.22431.12'
       - name: Publish
         #This command creates a docker image, due to the PublishProfile being set in Demo.Api.csproj
-        run: dotnet publish
+        run: dotnet publish --os linux --arch x64 -p:PublishProfile=DefaultContainer
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
