@@ -30,20 +30,42 @@ resource "aws_iam_role" "github_actions_role" {
   })
 }
 
+// This fine-grained policy has been generated using AWS IAM Access Analyzer, which uses
+// CloudTrail to determine the precise permissions based on access activity
+// https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-policy-generation.html
 resource "aws_iam_policy" "github_actions_policy" {
   name = "github_actions_role"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Action   = "iam:*"
+        Action   = [
+            "ecr:GetAuthorizationToken",
+            "ecs:DescribeTaskDefinition",
+            "ecs:RegisterTaskDefinition",
+            "sts:GetCallerIdentity"
+        ]
         Effect   = "Allow"
         Resource = "*"
       },
       {
-        Action   = "ecr:*"
+        Action   = [
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:CompleteLayerUpload",
+            "ecr:InitiateLayerUpload",
+            "ecr:PutImage",
+            "ecr:UploadLayerPart"
+        ]
         Effect   = "Allow"
-        Resource = "*"
+        Resource = module.ecr.aws_ecr_repository_arn
+      },
+      {
+        Action   = [
+            "ecs:DescribeServices",
+            "ecs:UpdateService"
+        ]
+        Effect   = "Allow"
+        Resource = module.ecs.aws_ecs_service_id
       },
     ]
   })
